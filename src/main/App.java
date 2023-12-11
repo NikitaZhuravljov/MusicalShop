@@ -310,7 +310,65 @@ public class App {
         }
     }
 
+<<<<<<< HEAD
     private void editProduct() {
+=======
+    private void saveData() {
+        try (PrintWriter writer = new PrintWriter(new FileWriter("data.txt"))) {
+            // Save products
+            for (Product product : productList) {
+                writer.println("Product," + product.getType() + "," + product.getName() + "," + product.getPrice() + "," + product.getStock());
+            }
+            // Save buyers
+            for (Buyer buyer : buyerList) {
+                writer.println("Buyer," + buyer.getName() + "," + buyer.getSecondName() + "," + buyer.getPhoneNumber() + "," + buyer.getMoney());
+                // Save purchased products for each buyer
+                for (Purchase purchase : purchaseList) {
+                    if (purchase.getBuyer().equals(buyer)) {
+                        writer.println("Purchase," + productList.indexOf(purchase.getProduct()));
+                    }
+                }
+            }
+            System.out.println("Data saved successfully!");
+        } catch (IOException e) {
+            System.out.println("Error saving data: " + e.getMessage());
+        }
+    }
+
+    private void loadData() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("data.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length > 0) {
+                    switch (parts[0]) {
+                        case "Product":
+                            productList.add(new Product(parts[1], parts[2], Double.parseDouble(parts[3]), Integer.parseInt(parts[4])));
+                            break;
+                        case "Buyer":
+                            Buyer buyer = new Buyer(parts[1], parts[2], parts[3]);
+                            buyer.setMoney(Double.parseDouble(parts[4]));
+                            buyerList.add(buyer);
+                            break;
+                        case "Purchase":
+                            int productIndex = Integer.parseInt(parts[1]);
+                            if (!buyerList.isEmpty()) {
+                                Purchase purchase = new Purchase(buyerList.get(buyerList.size() - 1), productList.get(productIndex));
+                                purchaseList.add(purchase);
+                            }
+                            break;
+                        default:
+                            System.out.println("Unknown entry in file");
+                            break;
+                    }
+                }
+            }
+            System.out.println("Data loaded successfully!");
+        } catch (IOException e) {
+            System.out.println("Error loading data: " + e.getMessage());
+        }
+    }
+>>>>>>> e060a98325bcb81d20244b74382495acf81270fd
 
         System.out.println("0. Return to menu\n" +
                 "1. Continue");
@@ -436,6 +494,5 @@ public class App {
             System.out.println("Error loading data: " + e.getMessage());
         }
     }
-
 
 }
