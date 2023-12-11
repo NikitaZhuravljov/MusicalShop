@@ -1,0 +1,4 @@
+Product,String,Guitar,150.0,5
+Product,Keys,Piano,300.0,4
+Buyer,Nikita,Zhuravljov,9039423,0.0
+Buyer,Artem,Aristov,494309023,0.0

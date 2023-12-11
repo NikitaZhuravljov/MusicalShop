@@ -18,6 +18,22 @@ public class Buyer {
     }
 
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setSecondName(String secondName) {
+        this.secondName = secondName;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setMoney(double money) {
+        this.money = money;
+    }
+
     public String getName() {
         return name;
     }

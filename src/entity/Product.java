@@ -6,7 +6,6 @@ public class Product {
     private String name;
     private double price;
     private int stock;
-    private int countSold;
 
     public Product(String type, String name, double price, int stock) {
         this.type = type;
@@ -15,20 +14,33 @@ public class Product {
         this.stock = stock;
     }
 
-    public String getType() {
-        return type;
-    }
 
-    public String getName() {
-        return name;
+    public int getStock() {
+        return stock;
     }
 
     public double getPrice() {
         return price;
     }
 
-    public int getStock() {
-        return stock;
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public void setStock(int stock) {

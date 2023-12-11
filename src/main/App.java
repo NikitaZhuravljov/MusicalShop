@@ -1,9 +1,15 @@
 package main;
+import java.io.*;
 import java.util.*;
 
 import entity.Buyer;
 import entity.Product;
 import entity.Purchase;
+
+import java.util.List;
+
+
+
 
 import tools.Input;
 public class App {
@@ -15,6 +21,7 @@ public class App {
     void run() {
         boolean repeat = true;
         System.out.println("------ Musical Instruments Shop ------");
+        loadData();
         do {
             System.out.println("List tasks:");
             System.out.println("0. Exit\n" +
@@ -27,9 +34,12 @@ public class App {
                     "7. Add money to the user\n" +
                     "8. Display the cost of sold items\n" +
                     "9. Display top buyers\n" +
-                    "10. Display top sold items");
+                    "10. Display top sold items\n" +
+                    "11. Edit product\n" +
+                    "12. Edit buyer" +
+                    "13. ");
             System.out.println("Task number: ");
-            int task = Input.inputNumberFromRange(0, 10);
+            int task = Input.inputNumberFromRange(0, 12);
 
             switch (task) {
                 case 0:
@@ -65,17 +75,31 @@ public class App {
                 case 10:
                     topSoldItems();
                     break;
+                case 11:
+                    editProduct();
+                    break;
+                case 12:
+                    editBuyer();
+                    break;
                 default:
                     System.out.println("no such option!");
             }
         } while (repeat);
+
+        saveData();
+
+
     }
+
 
     private void addProduct() {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Enter product type: ");
+        System.out.println("Enter product type or enter [MENU] to return back: ");
         String type = scanner.nextLine();
+        if (type.equalsIgnoreCase("menu")) {
+            return;
+        }
 
         System.out.println("Enter product name: ");
         String name = scanner.nextLine();
@@ -90,13 +114,17 @@ public class App {
         productList.add(product);
 
         System.out.println("Product added successfully!");
+
     }
 
     private void addBuyer() {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Enter buyer name: ");
+        System.out.println("Enter buyer name or enter [MENU] to return back: ");
         String name = scanner.nextLine();
+        if (name.equalsIgnoreCase("menu")) {
+            return;
+        }
 
         System.out.println("Enter buyer second name: ");
         String email = scanner.nextLine();
@@ -108,6 +136,7 @@ public class App {
         buyerList.add(buyer);
 
         System.out.println("Buyer added successfully!");
+
     }
 
     private void listBuyers() {
@@ -126,9 +155,18 @@ public class App {
 
     private void purchaseProduct() {
 
+        System.out.println("0. Return to menu\n" +
+                "1. Continue");
+        Scanner scanner = new Scanner(System.in);
+        int purchaseOptions = scanner.nextInt();
+        if (purchaseOptions == 0) {
+            return;
+        }
+
         System.out.println("Select a buyer (buyer number):");
         listBuyers();
         int buyerIndex = Input.inputNumberFromRange(1, buyerList.size()) - 1;
+
 
         System.out.println("Select a product (product number):");
         listProducts();
@@ -182,6 +220,13 @@ public class App {
 
     private void addMoneyToBuyer() {
         Scanner scanner = new Scanner(System.in);
+
+        System.out.println("0. Return to menu\n" +
+                "1. Continue");
+        int purchaseOptions = scanner.nextInt();
+        if (purchaseOptions == 0) {
+            return;
+        }
 
         System.out.println("Select a buyer to add money (buyer number):");
         listBuyers();
@@ -265,7 +310,132 @@ public class App {
         }
     }
 
+    private void editProduct() {
 
+        System.out.println("0. Return to menu\n" +
+                "1. Continue");
+        Scanner scanner = new Scanner(System.in);
+        int purchaseOptions = scanner.nextInt();
+        if (purchaseOptions == 0) {
+            return;
+        }
+
+        System.out.println("Select a product to edit (product number):");
+        listProducts();
+        int productIndex = Input.inputNumberFromRange(1, productList.size()) - 1;
+
+        Product product = productList.get(productIndex);
+
+        System.out.println("Enter new product type (previous: " + product.getType() + "): ");
+        String type = scanner.nextLine();
+
+        System.out.println("Enter new product name (previous: " + product.getName() + "): ");
+        String name = scanner.nextLine();
+
+        System.out.println("Enter new product price (previous: " + product.getPrice() + "): ");
+        double price = scanner.nextDouble();
+
+        System.out.println("Enter new product stock (previous: " + product.getStock() + "): ");
+        int stock = scanner.nextInt();
+
+        product.setType(type);
+        product.setName(name);
+        product.setPrice(price);
+        product.setStock(stock);
+
+        System.out.println("Product details updated successfully!");
+    }
+
+
+    private void editBuyer() {
+        System.out.println("0. Return to menu\n" +
+                "1. Continue");
+        Scanner scanner = new Scanner(System.in);
+        int purchaseOptions = scanner.nextInt();
+        scanner.nextLine();
+
+        if (purchaseOptions == 0) {
+            return;
+        }
+
+        if (purchaseOptions == 1) {
+            System.out.println("Select a buyer to edit (buyer number):");
+            listBuyers();
+            int buyerIndex = Input.inputNumberFromRange(1, buyerList.size()) - 1;
+
+            Buyer buyer = buyerList.get(buyerIndex);
+
+            System.out.println("Enter new buyer name (previous: " + buyer.getName() + "): ");
+            String name = scanner.nextLine();
+
+            System.out.println("Enter new buyer second name (previous: " + buyer.getSecondName() + "): ");
+            String secondName = scanner.nextLine();
+
+            System.out.println("Enter new buyer phone number (previous: " + buyer.getPhoneNumber() + "): ");
+            String phoneNumber = scanner.nextLine();
+
+            buyer.setName(name);
+            buyer.setSecondName(secondName);
+            buyer.setPhoneNumber(phoneNumber);
+
+            System.out.println("Buyer details updated successfully!");
+        }
+    }
+    private void saveData() {
+        try (PrintWriter writer = new PrintWriter(new FileWriter("data.txt"))) {
+            // Save products
+            for (Product product : productList) {
+                writer.println("Product," + product.getType() + "," + product.getName() + "," + product.getPrice() + "," + product.getStock());
+            }
+            // Save buyers
+            for (Buyer buyer : buyerList) {
+                writer.println("Buyer," + buyer.getName() + "," + buyer.getSecondName() + "," + buyer.getPhoneNumber() + "," + buyer.getMoney());
+                // Save purchased products for each buyer
+                for (Purchase purchase : purchaseList) {
+                    if (purchase.getBuyer().equals(buyer)) {
+                        writer.println("Purchase," + productList.indexOf(purchase.getProduct()));
+                    }
+                }
+            }
+            System.out.println("Data saved successfully!");
+        } catch (IOException e) {
+            System.out.println("Error saving data: " + e.getMessage());
+        }
+    }
+
+    private void loadData() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("data.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length > 0) {
+                    switch (parts[0]) {
+                        case "Product":
+                            productList.add(new Product(parts[1], parts[2], Double.parseDouble(parts[3]), Integer.parseInt(parts[4])));
+                            break;
+                        case "Buyer":
+                            Buyer buyer = new Buyer(parts[1], parts[2], parts[3]);
+                            buyer.setMoney(Double.parseDouble(parts[4]));
+                            buyerList.add(buyer);
+                            break;
+                        case "Purchase":
+                            int productIndex = Integer.parseInt(parts[1]);
+                            if (!buyerList.isEmpty()) {
+                                Purchase purchase = new Purchase(buyerList.get(buyerList.size() - 1), productList.get(productIndex));
+                                purchaseList.add(purchase);
+                            }
+                            break;
+                        default:
+                            System.out.println("Unknown entry in file");
+                            break;
+                    }
+                }
+            }
+            System.out.println("Data loaded successfully!");
+        } catch (IOException e) {
+            System.out.println("Error loading data: " + e.getMessage());
+        }
+    }
 
 
 }
